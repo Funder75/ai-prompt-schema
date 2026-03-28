@@ -1,0 +1,875 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://kie.ai/schemas/structured-prompt.schema.json",
+	"title": "StructuredPrompt",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"subject",
+		"scene"
+	],
+	"properties": {
+		"user_intent": {
+			"type": "string"
+		},
+		"meta": {
+			"type": "object",
+			"additionalProperties": false,
+			"description": "This is a schema that matches anything.",
+			"properties": {
+				"aspect_ratio": {
+					"anyOf": [
+						{
+							"enum": [
+								"16:9",
+								"9:16",
+								"1:1",
+								"4:3",
+								"3:4",
+								"21:9",
+								"3:2",
+								"2:3",
+								"5:4",
+								"4:5"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"quality": {
+					"anyOf": [
+						{
+							"enum": [
+								"ultra_photorealistic",
+								"standard",
+								"raw",
+								"anime_v6",
+								"3d_render_octane",
+								"oil_painting",
+								"sketch",
+								"pixel_art",
+								"vector_illustration"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"safety_filter": {
+					"anyOf": [
+						{
+							"enum": [
+								"block_none",
+								"block_few",
+								"block_some",
+								"block_most"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"seed": {
+					"type": "number"
+				},
+				"steps": {
+					"type": "number"
+				},
+				"guidance_scale": {
+					"type": "number"
+				}
+			}
+		},
+		"subject": {
+			"type": "array",
+			"minItems": 1,
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"required": [
+					"type",
+					"description"
+				],
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"type": {
+						"anyOf": [
+							{
+								"enum": [
+									"person",
+									"animal",
+									"cyborg",
+									"monster",
+									"statue",
+									"robot",
+									"vehicle",
+									"object"
+								]
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"input_image": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": [
+							"path"
+						],
+						"properties": {
+							"path": {
+								"type": "string"
+							},
+							"usage_type": {
+								"anyOf": [
+									{
+										"enum": [
+											"face_id",
+											"pose_copy",
+											"clothing_transfer",
+											"depth_map",
+											"full_character_reference",
+											"style_transfer"
+										]
+									},
+									{
+										"type": "string"
+									}
+								]
+							},
+							"strength": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							}
+						}
+					},
+					"description": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"age": {
+						"type": "string"
+					},
+					"gender": {
+						"anyOf": [
+							{
+								"enum": [
+									"male",
+									"female",
+									"non-binary",
+									"androgynous"
+								]
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"hair": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"style": {
+								"type": "string"
+							},
+							"color": {
+								"type": "string"
+							}
+						}
+					},
+					"position": {
+						"anyOf": [
+							{
+								"enum": [
+									"center",
+									"left",
+									"right",
+									"far_left",
+									"far_right",
+									"background",
+									"foreground",
+									"floating_above",
+									"sitting_on_ground"
+								]
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"pose": {
+						"type": "string"
+					},
+					"expression": {
+						"anyOf": [
+							{
+								"enum": [
+									"neutral",
+									"smiling",
+									"laughing",
+									"angry",
+									"screaming",
+									"crying",
+									"seductive",
+									"stoic",
+									"surprised",
+									"tired",
+									"suspicious",
+									"pain"
+								]
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"clothing": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"item"
+							],
+							"properties": {
+								"item": {
+									"type": "string"
+								},
+								"color": {
+									"type": "string"
+								},
+								"fabric": {
+									"anyOf": [
+										{
+											"enum": [
+												"cotton",
+												"wool",
+												"silk",
+												"linen",
+												"denim",
+												"leather",
+												"latex",
+												"velvet",
+												"chiffon",
+												"satin",
+												"nylon",
+												"spandex",
+												"lace",
+												"tweed",
+												"corduroy",
+												"fur",
+												"fleece",
+												"mesh",
+												"cashmere",
+												"flannel",
+												"sequins"
+											]
+										},
+										{
+											"type": "string"
+										}
+									]
+								},
+								"pattern": {
+									"anyOf": [
+										{
+											"enum": [
+												"solid",
+												"striped",
+												"plaid",
+												"polka_dot",
+												"floral",
+												"camouflage",
+												"tie_dye",
+												"geometric",
+												"animal_print",
+												"paisley",
+												"checked",
+												"gradient"
+											]
+										},
+										{
+											"type": "string"
+										}
+									]
+								},
+								"fit": {
+									"anyOf": [
+										{
+											"enum": [
+												"tight",
+												"slim",
+												"regular",
+												"loose",
+												"oversized",
+												"baggy",
+												"fitted",
+												"flowy"
+											]
+										},
+										{
+											"type": "string"
+										}
+									]
+								},
+								"layer": {
+									"anyOf": [
+										{
+											"enum": [
+												"underwear",
+												"inner",
+												"middle",
+												"outer",
+												"coat"
+											]
+										},
+										{
+											"type": "string"
+										}
+									]
+								}
+							}
+						}
+					},
+					"accessories": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"item"
+							],
+							"properties": {
+								"item": {
+									"type": "string"
+								},
+								"material": {
+									"anyOf": [
+										{
+											"enum": [
+												"gold",
+												"silver",
+												"plastic",
+												"wood",
+												"glass",
+												"metal",
+												"diamond",
+												"pearl",
+												"leather",
+												"bone",
+												"obsidian",
+												"chrome",
+												"fabric",
+												"canvas",
+												"straw",
+												"feathers",
+												"paper",
+												"resin",
+												"rubber",
+												"silicone",
+												"ceramic",
+												"crystal",
+												"stone",
+												"rope",
+												"enamel",
+												"carbon_fiber"
+											]
+										},
+										{
+											"type": "string"
+										}
+									]
+								},
+								"color": {
+									"type": "string"
+								},
+								"location": {
+									"anyOf": [
+										{
+											"enum": [
+												"head",
+												"face",
+												"ears",
+												"neck",
+												"wrists",
+												"fingers",
+												"waist",
+												"back",
+												"held_in_hand",
+												"floating_nearby"
+											]
+										},
+										{
+											"type": "string"
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"scene": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"location": {
+					"type": "string"
+				},
+				"time": {
+					"anyOf": [
+						{
+							"enum": [
+								"golden_hour",
+								"blue_hour",
+								"high_noon",
+								"midnight",
+								"sunrise",
+								"sunset",
+								"twilight",
+								"pitch_black"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"weather": {
+					"anyOf": [
+						{
+							"enum": [
+								"clear_skies",
+								"overcast",
+								"rainy",
+								"stormy",
+								"snowing",
+								"foggy",
+								"hazy",
+								"sandstorm",
+								"acid_rain"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"lighting": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"type": {
+							"anyOf": [
+								{
+									"enum": [
+										"natural_sunlight",
+										"studio_softbox",
+										"hard_flash",
+										"neon_lights",
+										"candlelight",
+										"cinematic",
+										"bioluminescent",
+										"firelight",
+										"god_rays",
+										"rembrandt"
+									]
+								},
+								{
+									"type": "string"
+								}
+							]
+						},
+						"direction": {
+							"anyOf": [
+								{
+									"enum": [
+										"front_lit",
+										"back_lit",
+										"side_lit",
+										"top_down",
+										"rim_light",
+										"silhouette",
+										"under_lit"
+									]
+								},
+								{
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				"background_elements": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"technical": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"camera_model": {
+					"type": "string"
+				},
+				"lens": {
+					"anyOf": [
+						{
+							"enum": [
+								"16mm",
+								"24mm",
+								"35mm",
+								"50mm",
+								"85mm",
+								"105mm",
+								"200mm",
+								"400mm",
+								"macro_100mm",
+								"fisheye_8mm"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"aperture": {
+					"anyOf": [
+						{
+							"enum": [
+								"f/1.2",
+								"f/1.4",
+								"f/1.8",
+								"f/2.8",
+								"f/4.0",
+								"f/5.6",
+								"f/8.0",
+								"f/11",
+								"f/16"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"shutter_speed": {
+					"anyOf": [
+						{
+							"enum": [
+								"1/8000",
+								"1/4000",
+								"1/1000",
+								"1/500",
+								"1/250",
+								"1/125",
+								"1/60",
+								"1/30",
+								"1/15",
+								"1s",
+								"long_exposure_bulb"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"iso": {
+					"anyOf": [
+						{
+							"enum": [
+								"100",
+								"200",
+								"400",
+								"800",
+								"1600",
+								"3200",
+								"6400",
+								"12800"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"film_stock": {
+					"type": "string"
+				}
+			}
+		},
+		"composition": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"framing": {
+					"anyOf": [
+						{
+							"enum": [
+								"extreme_close_up",
+								"close_up",
+								"medium_shot",
+								"cowboy_shot",
+								"full_body",
+								"wide_shot",
+								"extreme_wide_shot",
+								"macro_detail"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"angle": {
+					"anyOf": [
+						{
+							"enum": [
+								"eye_level",
+								"low_angle",
+								"high_angle",
+								"dutch_angle",
+								"bird_eye_view",
+								"worm_eye_view",
+								"overhead",
+								"pov",
+								"drone_view"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"focus_point": {
+					"anyOf": [
+						{
+							"enum": [
+								"face",
+								"eyes",
+								"hands",
+								"background",
+								"foreground_object",
+								"whole_scene"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				}
+			}
+		},
+		"text_rendering": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"enabled": {
+					"type": "boolean"
+				},
+				"text_content": {
+					"type": "string"
+				},
+				"placement": {
+					"anyOf": [
+						{
+							"enum": [
+								"floating_in_air",
+								"neon_sign_on_wall",
+								"printed_on_tshirt",
+								"graffiti_on_wall",
+								"smart_phone_screen",
+								"computer_monitor",
+								"book_cover",
+								"movie_poster",
+								"subtitles"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"font_style": {
+					"anyOf": [
+						{
+							"enum": [
+								"bold_sans_serif",
+								"elegant_serif",
+								"handwritten",
+								"cyberpunk_digital",
+								"graffiti_tag",
+								"gothic",
+								"retro_pixel",
+								"neon_tube"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"color": {
+					"type": "string"
+				}
+			}
+		},
+		"style_modifiers": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"medium": {
+					"anyOf": [
+						{
+							"enum": [
+								"photography",
+								"3d_render",
+								"oil_painting",
+								"watercolor",
+								"pencil_sketch",
+								"ink_drawing",
+								"anime",
+								"concept_art",
+								"digital_illustration",
+								"claymation",
+								"papercraft"
+							]
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"aesthetic": {
+					"type": "array",
+					"items": {
+						"anyOf": [
+							{
+								"enum": [
+									"cyberpunk",
+									"steampunk",
+									"vaporwave",
+									"synthwave",
+									"noir",
+									"minimalist",
+									"maximalist",
+									"gothic",
+									"baroque",
+									"retro_80s",
+									"vintage_50s",
+									"futuristic",
+									"post_apocalyptic",
+									"ethereal",
+									"dreamcore",
+									"weirdcore"
+								]
+							},
+							{
+								"type": "string"
+							}
+						]
+					}
+				},
+				"artist_reference": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"style_description": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"art_movement": {
+					"type": "string"
+				},
+				"rendering_technique": {
+					"type": "string"
+				},
+				"visual_elements": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"line_work": {
+							"type": "string"
+						},
+						"color_palette": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"description": {
+									"type": "string"
+								},
+								"key_features": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"lighting_and_atmosphere": {
+							"type": "string"
+						},
+						"compositional_style": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"focus": {
+									"type": "string"
+								},
+								"texture": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"thematic_mood": {
+					"type": "string"
+				}
+			}
+		},
+		"prompt_keywords": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"advanced": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"negative_prompt": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"magic_prompt_enhancer": {
+					"type": "boolean"
+				},
+				"hdr_mode": {
+					"type": "boolean"
+				}
+			}
+		}
+	}
+}
