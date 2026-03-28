@@ -1,7 +1,8 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://kie.ai/schemas/structured-prompt.schema.json",
+	"$id": "https://raw.githubusercontent.com/Funder75/ai-prompt-schema/refs/heads/main/v0.1a",
 	"title": "StructuredPrompt",
+	"description": "Machine- and human-readable structure for an image-generation prompt. Split into subject(s), scene, optional camera and style blocks, and advanced flags. Producers should fill required fields; validators reject unknown top-level keys.",
 	"type": "object",
 	"additionalProperties": false,
 	"required": [
@@ -10,14 +11,19 @@
 	],
 	"properties": {
 		"user_intent": {
+			"title": "User intent",
+			"description": "High-level goal or story in natural language (what the user wants the image to achieve). Often merged into the final prompt or shown in UIs; not validated beyond being a string.",
 			"type": "string"
 		},
 		"meta": {
+			"title": "Generation metadata",
+			"description": "Non-visual parameters that many diffusion or API pipelines accept: canvas aspect ratio, overall quality preset, safety aggressiveness, reproducibility (seed), and sampler-style numeric hints (steps, guidance). All fields are optional; omit what the backend does not support.",
 			"type": "object",
 			"additionalProperties": false,
-			"description": "This is a schema that matches anything.",
 			"properties": {
 				"aspect_ratio": {
+					"title": "Aspect ratio",
+					"description": "Output frame width:height. Use a preset token (e.g. 16:9) when the API supports it, or any string your pipeline maps to dimensions (e.g. custom ratios).",
 					"anyOf": [
 						{
 							"enum": [
@@ -39,6 +45,8 @@
 					]
 				},
 				"quality": {
+					"title": "Quality / render preset",
+					"description": "Overall fidelity or style family: photoreal, illustrative presets, etc. Custom strings allow vendor-specific values beyond the enum.",
 					"anyOf": [
 						{
 							"enum": [
@@ -59,6 +67,8 @@
 					]
 				},
 				"safety_filter": {
+					"title": "Safety filter strength",
+					"description": "How aggressively the provider blocks disallowed content; semantics are API-specific. Custom strings for alternate policies.",
 					"anyOf": [
 						{
 							"enum": [
@@ -74,20 +84,30 @@
 					]
 				},
 				"seed": {
+					"title": "Random seed",
+					"description": "Integer or float seed for reproducible noise; omit or change for different variations. Exact type depends on the backend.",
 					"type": "number"
 				},
 				"steps": {
+					"title": "Inference steps",
+					"description": "Number of denoising steps (or equivalent). Higher often means finer detail and slower generation; valid ranges are model-specific.",
 					"type": "number"
 				},
 				"guidance_scale": {
+					"title": "Guidance scale (CFG)",
+					"description": "Classifier-free guidance strength: how strongly the output follows the prompt vs. diversity. Typical diffusion range is roughly 1–20 depending on model.",
 					"type": "number"
 				}
 			}
 		},
 		"subject": {
+			"title": "Primary subjects",
+			"description": "Ordered list of entities the image should depict (people, creatures, objects, etc.). At least one entry is required. Each element is self-contained: identity, optional reference image, pose, wardrobe, and accessories. Use multiple entries for groups or distinct focal entities.",
 			"type": "array",
 			"minItems": 1,
 			"items": {
+				"title": "Subject entry",
+				"description": "One focal entity in the frame. Requires a categorical type and a free-text description; other fields refine appearance, placement, and conditioning from reference images.",
 				"type": "object",
 				"additionalProperties": false,
 				"required": [
@@ -96,9 +116,13 @@
 				],
 				"properties": {
 					"id": {
+						"title": "Subject id",
+						"description": "Stable identifier for this subject within the document (e.g. for linking, UI keys, or multi-subject layouts). Optional.",
 						"type": "string"
 					},
 					"type": {
+						"title": "Subject kind",
+						"description": "Category of entity (person, vehicle, etc.). Use enum values for consistency or any string for custom types.",
 						"anyOf": [
 							{
 								"enum": [
@@ -118,6 +142,8 @@
 						]
 					},
 					"input_image": {
+						"title": "Reference / control image",
+						"description": "Optional image path (or URI) used to steer identity, pose, depth, style, or garments. usage_type tells the pipeline how to interpret the image; strength blends control vs. prompt (0–1).",
 						"type": "object",
 						"additionalProperties": false,
 						"required": [
@@ -125,9 +151,13 @@
 						],
 						"properties": {
 							"path": {
+								"title": "Image path or URI",
+								"description": "Filesystem path, URL, or asset id pointing to the reference image. Required when input_image is present.",
 								"type": "string"
 							},
 							"usage_type": {
+								"title": "Reference usage",
+								"description": "How the pipeline should use this image: identity, pose, garment transfer, depth, full reference, or style. Custom strings for other adapters.",
 								"anyOf": [
 									{
 										"enum": [
@@ -145,6 +175,8 @@
 								]
 							},
 							"strength": {
+								"title": "Control strength",
+								"description": "Blend factor from 0 (ignore reference) to 1 (strongly follow reference). Interpretation varies by control type.",
 								"type": "number",
 								"minimum": 0,
 								"maximum": 1
@@ -152,15 +184,23 @@
 						}
 					},
 					"description": {
+						"title": "Subject description",
+						"description": "Required free-text depiction: appearance, role, and key visual traits. This is the main narrative hook for the subject.",
 						"type": "string"
 					},
 					"name": {
+						"title": "Name or label",
+						"description": "Optional proper name or short label (character name, product name) for prompts or UI.",
 						"type": "string"
 					},
 					"age": {
+						"title": "Age",
+						"description": "Apparent or stated age as text (e.g. mid-20s, elderly) to avoid forcing numeric parsing across locales.",
 						"type": "string"
 					},
 					"gender": {
+						"title": "Gender presentation",
+						"description": "Gender or presentation hint; use enum for common presets or any string for inclusive/custom values.",
 						"anyOf": [
 							{
 								"enum": [
@@ -176,18 +216,26 @@
 						]
 					},
 					"hair": {
+						"title": "Hair",
+						"description": "Structured hair notes: style (cut, length, arrangement) and color. Keeps hair separate from the main description for UI editors and consistent prompting.",
 						"type": "object",
 						"additionalProperties": false,
 						"properties": {
 							"style": {
+								"title": "Hair style",
+								"description": "Cut, length, texture, and arrangement (e.g. long wavy bob, buzz cut, braided updo).",
 								"type": "string"
 							},
 							"color": {
+								"title": "Hair color",
+								"description": "Color or dye description, including highlights or unnatural tones if desired.",
 								"type": "string"
 							}
 						}
 					},
 					"position": {
+						"title": "Position in frame",
+						"description": "Where the subject sits relative to the composition (center, edges, depth plane). Custom strings for fine placement.",
 						"anyOf": [
 							{
 								"enum": [
@@ -208,9 +256,13 @@
 						]
 					},
 					"pose": {
+						"title": "Pose",
+						"description": "Body posture and action in free text (standing, running, seated, interacting with props).",
 						"type": "string"
 					},
 					"expression": {
+						"title": "Facial expression",
+						"description": "Face or mood for characters; enum lists common presets, string allows custom wording.",
 						"anyOf": [
 							{
 								"enum": [
@@ -234,8 +286,12 @@
 						]
 					},
 					"clothing": {
+						"title": "Clothing pieces",
+						"description": "Wardrobe as a list of garments. Each item names the piece and may specify material, pattern, fit, and layering role. Order can imply draw order or narrative (e.g. base layer then outerwear).",
 						"type": "array",
 						"items": {
+							"title": "Clothing item",
+							"description": "A single garment or wearable. item is required (e.g. jacket, dress); optional fields constrain fabric, pattern, silhouette, and stack position for layered outfits.",
 							"type": "object",
 							"additionalProperties": false,
 							"required": [
@@ -243,12 +299,18 @@
 							],
 							"properties": {
 								"item": {
+									"title": "Garment name",
+									"description": "What the piece is (e.g. trench coat, sneakers, sari). Required for each clothing entry.",
 									"type": "string"
 								},
 								"color": {
+									"title": "Garment color",
+									"description": "Dominant color or pattern color notes for this piece.",
 									"type": "string"
 								},
 								"fabric": {
+									"title": "Fabric / material",
+									"description": "Textile or material; enum suggests common types, string allows blends or fictional materials.",
 									"anyOf": [
 										{
 											"enum": [
@@ -281,6 +343,8 @@
 									]
 								},
 								"pattern": {
+									"title": "Pattern",
+									"description": "Surface pattern or print on the fabric.",
 									"anyOf": [
 										{
 											"enum": [
@@ -304,6 +368,8 @@
 									]
 								},
 								"fit": {
+									"title": "Fit / silhouette",
+									"description": "How the garment sits on the body (tight, oversized, etc.).",
 									"anyOf": [
 										{
 											"enum": [
@@ -323,6 +389,8 @@
 									]
 								},
 								"layer": {
+									"title": "Clothing layer",
+									"description": "Stacking role for layered outfits (base vs outerwear). Helps prompts like jacket over shirt.",
 									"anyOf": [
 										{
 											"enum": [
@@ -342,8 +410,12 @@
 						}
 					},
 					"accessories": {
+						"title": "Accessories",
+						"description": "Non-garment adornments: jewelry, bags, props worn or carried. Each entry names the accessory and may specify material, color, and body placement.",
 						"type": "array",
 						"items": {
+							"title": "Accessory entry",
+							"description": "One accessory. item is required; material and location help disambiguate multiple similar pieces (e.g. two rings on different hands).",
 							"type": "object",
 							"additionalProperties": false,
 							"required": [
@@ -351,9 +423,13 @@
 							],
 							"properties": {
 								"item": {
+									"title": "Accessory name",
+									"description": "What it is (watch, crown, backpack, sword in scabbard).",
 									"type": "string"
 								},
 								"material": {
+									"title": "Accessory material",
+									"description": "Primary substance (metal, leather, gem, etc.); enum lists common options.",
 									"anyOf": [
 										{
 											"enum": [
@@ -391,9 +467,13 @@
 									]
 								},
 								"color": {
+									"title": "Accessory color",
+									"description": "Color or finish (matte black, rose gold).",
 									"type": "string"
 								},
 								"location": {
+									"title": "Placement on body / scene",
+									"description": "Where the accessory is worn or held relative to the subject.",
 									"anyOf": [
 										{
 											"enum": [
@@ -421,13 +501,19 @@
 			}
 		},
 		"scene": {
+			"title": "Scene and environment",
+			"description": "Where and when the image takes place: place, time of day, weather, structured lighting, and a list of background props or features. Pairs with subject to form the full narrative context.",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"location": {
+					"title": "Location",
+					"description": "Setting in free text: city, room, landscape, fictional place, or address-level detail as needed.",
 					"type": "string"
 				},
 				"time": {
+					"title": "Time of day / lighting period",
+					"description": "Qualitative time (golden hour, midnight) affecting light color and shadows; custom string for narrative time.",
 					"anyOf": [
 						{
 							"enum": [
@@ -447,6 +533,8 @@
 					]
 				},
 				"weather": {
+					"title": "Weather",
+					"description": "Atmospheric conditions affecting sky, particles, and wet surfaces.",
 					"anyOf": [
 						{
 							"enum": [
@@ -467,10 +555,14 @@
 					]
 				},
 				"lighting": {
+					"title": "Scene lighting",
+					"description": "How the environment is lit: light source character (sun, studio, neon, etc.) and direction relative to subjects. Complements scene.time and weather for coherent atmosphere.",
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
 						"type": {
+							"title": "Light source type",
+							"description": "Quality and origin of light (sun, softbox, neon, fire, etc.). Distinct from scene.time, which is clock-based.",
 							"anyOf": [
 								{
 									"enum": [
@@ -492,6 +584,8 @@
 							]
 						},
 						"direction": {
+							"title": "Light direction",
+							"description": "Where light hits the subject relative to camera (front, back, rim, etc.).",
 							"anyOf": [
 								{
 									"enum": [
@@ -512,21 +606,31 @@
 					}
 				},
 				"background_elements": {
+					"title": "Background elements",
+					"description": "Short free-text phrases for objects, architecture, or scenery behind the main subject(s). Each string is typically a noun phrase; order is not normative unless your renderer interprets it.",
 					"type": "array",
 					"items": {
+						"title": "Background element",
+						"description": "One background detail (e.g. cherry trees, neon signs, distant mountains).",
 						"type": "string"
 					}
 				}
 			}
 		},
 		"technical": {
+			"title": "Camera and capture technicals",
+			"description": "Photography-oriented parameters: body, lens focal length, aperture, shutter, ISO, and film stock. Use to steer photorealistic renders toward a specific capture look.",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"camera_model": {
+					"title": "Camera body",
+					"description": "Make and model or generic label (e.g. DSLR, large format) to bias rendering toward a certain sensor look.",
 					"type": "string"
 				},
 				"lens": {
+					"title": "Focal length / lens type",
+					"description": "Approximate focal length or special lens (macro, fisheye); affects perspective and compression.",
 					"anyOf": [
 						{
 							"enum": [
@@ -548,6 +652,8 @@
 					]
 				},
 				"aperture": {
+					"title": "Aperture (f-number)",
+					"description": "Depth of field control: wider apertures (lower f-number) yield shallower focus.",
 					"anyOf": [
 						{
 							"enum": [
@@ -568,6 +674,8 @@
 					]
 				},
 				"shutter_speed": {
+					"title": "Shutter speed",
+					"description": "Exposure time: fast speeds freeze motion; slow or bulb implies blur or light trails.",
 					"anyOf": [
 						{
 							"enum": [
@@ -590,6 +698,8 @@
 					]
 				},
 				"iso": {
+					"title": "ISO sensitivity",
+					"description": "Sensor gain; higher values suggest more noise and low-light behavior. Stored as string tokens to match common camera UI.",
 					"anyOf": [
 						{
 							"enum": [
@@ -609,15 +719,21 @@
 					]
 				},
 				"film_stock": {
+					"title": "Film stock",
+					"description": "Named emulsion or digital film emulation (e.g. Kodak Portra 400) for color and grain character.",
 					"type": "string"
 				}
 			}
 		},
 		"composition": {
+			"title": "Framing and composition",
+			"description": "How the frame is built: shot scale (close-up vs wide), camera angle, and intended focus of attention. Drives layout and depth-of-field intent separate from literal camera settings.",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"framing": {
+					"title": "Shot framing / scale",
+					"description": "How much of the subject and environment is visible (close-up through extreme wide).",
 					"anyOf": [
 						{
 							"enum": [
@@ -637,6 +753,8 @@
 					]
 				},
 				"angle": {
+					"title": "Camera angle",
+					"description": "Vertical and rotational relationship between camera and subject (eye level, low angle, dutch tilt, POV).",
 					"anyOf": [
 						{
 							"enum": [
@@ -657,6 +775,8 @@
 					]
 				},
 				"focus_point": {
+					"title": "Focus point",
+					"description": "What should be sharpest or narratively dominant in the frame.",
 					"anyOf": [
 						{
 							"enum": [
@@ -676,16 +796,24 @@
 			}
 		},
 		"text_rendering": {
+			"title": "Text in the image",
+			"description": "When the image must contain readable text: toggle, exact string, where it appears, typographic style, and color. Many models struggle with spelling; enabled flags downstream handling.",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"enabled": {
+					"title": "Text rendering enabled",
+					"description": "If true, downstream builders should include text_content and related fields in the prompt path.",
 					"type": "boolean"
 				},
 				"text_content": {
+					"title": "Text to render",
+					"description": "Exact string to appear in-image; spelling-sensitive. May be empty if only placement/style matter.",
 					"type": "string"
 				},
 				"placement": {
+					"title": "Text placement",
+					"description": "Surface or context where text appears (sign, shirt, screen, etc.).",
 					"anyOf": [
 						{
 							"enum": [
@@ -706,6 +834,8 @@
 					]
 				},
 				"font_style": {
+					"title": "Font / lettering style",
+					"description": "Typographic character for the rendered text.",
 					"anyOf": [
 						{
 							"enum": [
@@ -725,15 +855,21 @@
 					]
 				},
 				"color": {
+					"title": "Text color",
+					"description": "Ink, neon, or fill color for the lettering.",
 					"type": "string"
 				}
 			}
 		},
 		"style_modifiers": {
+			"title": "Style modifiers",
+			"description": "Broad artistic direction: output medium, a stack of aesthetic tags, and optional artist names for style reference (use responsibly and in line with platform policy).",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"medium": {
+					"title": "Output medium",
+					"description": "Primary medium or pipeline (photo, 3D, oil, anime, etc.).",
 					"anyOf": [
 						{
 							"enum": [
@@ -756,8 +892,12 @@
 					]
 				},
 				"aesthetic": {
+					"title": "Aesthetic tags",
+					"description": "Ordered or unordered list of vibe or genre labels (cyberpunk, noir, etc.). Multiple values combine; custom strings extend the enumerated set.",
 					"type": "array",
 					"items": {
+						"title": "Aesthetic tag",
+						"description": "One genre, era, or mood label; enum lists common tags, string allows anything.",
 						"anyOf": [
 							{
 								"enum": [
@@ -786,56 +926,86 @@
 					}
 				},
 				"artist_reference": {
+					"title": "Artist references",
+					"description": "Names or short phrases referring to artistic influences. Often flattened into prompt text; respect copyright and platform rules when using real artist names.",
 					"type": "array",
 					"items": {
+						"title": "Artist reference",
+						"description": "Single influence name or phrase (e.g. school or photographer style).",
 						"type": "string"
 					}
 				}
 			}
 		},
 		"style_description": {
+			"title": "Rich style description",
+			"description": "Narrative style specification: art-historical context, technique, nested visual language (line, palette, atmosphere, composition), and overall mood. Suited for editors that need structured style beyond tags.",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"art_movement": {
+					"title": "Art movement",
+					"description": "Historical or stylistic movement (Impressionism, Bauhaus, ukiyo-e) in prose.",
 					"type": "string"
 				},
 				"rendering_technique": {
+					"title": "Rendering technique",
+					"description": "How marks or pixels are applied (impasto, cross-hatching, ray-traced GI, flat cel shading).",
 					"type": "string"
 				},
 				"visual_elements": {
+					"title": "Visual language",
+					"description": "Breakdown of how the image should look: linework, palette (with optional bullet features), lighting mood, and compositional habits (center of interest, surface texture).",
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
 						"line_work": {
+							"title": "Line work",
+							"description": "Contour and stroke character (bold ink, hairlines, sketchy pencil).",
 							"type": "string"
 						},
 						"color_palette": {
+							"title": "Color palette",
+							"description": "Human-readable palette description plus a list of distinctive color cues (e.g. accent colors, temperature).",
 							"type": "object",
 							"additionalProperties": false,
 							"properties": {
 								"description": {
+									"title": "Palette narrative",
+									"description": "Prose summary of overall palette (muted earth tones, neon on black, pastel wash).",
 									"type": "string"
 								},
 								"key_features": {
+									"title": "Palette key features",
+									"description": "Short strings highlighting notable colors, contrasts, or grading choices.",
 									"type": "array",
 									"items": {
+										"title": "Palette feature",
+										"description": "One bullet such as teal shadows, gold rim light, or desaturated skin.",
 										"type": "string"
 									}
 								}
 							}
 						},
 						"lighting_and_atmosphere": {
+							"title": "Lighting and atmosphere",
+							"description": "Non-technical mood for light and air (hazy, chiaroscuro, sterile clinical).",
 							"type": "string"
 						},
 						"compositional_style": {
+							"title": "Compositional style",
+							"description": "Abstract compositional habits: what draws the eye and how surfaces read (gritty, glossy, painterly, etc.).",
 							"type": "object",
 							"additionalProperties": false,
 							"properties": {
 								"focus": {
+									"title": "Compositional focus",
+									"description": "Where the eye should land or how balance is achieved (rule of thirds, centered icon, chaotic scatter).",
 									"type": "string"
 								},
 								"texture": {
+									"title": "Surface texture read",
+									"description": "Overall tactile impression of surfaces (gritty film grain, porcelain smooth, heavy impasto).",
 									"type": "string"
 								}
 							}
@@ -843,30 +1013,46 @@
 					}
 				},
 				"thematic_mood": {
+					"title": "Thematic mood",
+					"description": "Emotional or narrative tone (melancholic, triumphant, uncanny) separate from literal lighting.",
 					"type": "string"
 				}
 			}
 		},
 		"prompt_keywords": {
+			"title": "Prompt keywords",
+			"description": "Flat list of extra tokens or phrases appended or merged into the final prompt. Useful for platform-specific tags or adjectives that do not fit other sections.",
 			"type": "array",
 			"items": {
+				"title": "Keyword or tag",
+				"description": "Single token or short phrase (e.g. masterpiece, 8k) to splice into flattened prompts.",
 				"type": "string"
 			}
 		},
 		"advanced": {
+			"title": "Advanced options",
+			"description": "Pipeline-specific toggles: explicit negative terms, automatic prompt expansion, and HDR-like rendering hints. Meaning depends on the target API or model.",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"negative_prompt": {
+					"title": "Negative prompt terms",
+					"description": "Concepts to suppress (artifacts, unwanted objects, styles). Usually concatenated for models that support negative prompts.",
 					"type": "array",
 					"items": {
+						"title": "Negative term",
+						"description": "One concept or phrase to avoid (blur, extra fingers, watermark).",
 						"type": "string"
 					}
 				},
 				"magic_prompt_enhancer": {
+					"title": "Magic prompt enhancer",
+					"description": "If true, request automatic prompt expansion or rewriting from the provider (behavior is API-specific).",
 					"type": "boolean"
 				},
 				"hdr_mode": {
+					"title": "HDR mode",
+					"description": "If true, bias toward high dynamic range or tone-mapped look where the backend supports it.",
 					"type": "boolean"
 				}
 			}
